@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "YJC16coScFk=",
+  "success": true,
+  "projectFilePath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\nasta\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.8\\microsoft.aspnetcore.openapi.9.0.8.nupkg.sha512",
+    "C:\\Users\\nasta\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
