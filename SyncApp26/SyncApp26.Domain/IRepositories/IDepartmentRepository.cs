@@ -1,0 +1,13 @@
+using SyncApp26.Domain.Entities;
+
+namespace SyncApp26.Domain.IRepositories
+{
+    public interface IDepartmentRepository
+    {
+        Task<Department?> GetDepartmentByIdAsync(Guid id);
+        Task<IEnumerable<Department>> GetAllDepartmentsAsync();
+        Task AddDepartmentAsync(Department department);
+        Task UpdateDepartmentAsync(Department department);
+        Task DeleteDepartmentAsync(Guid id);
+    }
+}
