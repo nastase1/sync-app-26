@@ -8,11 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SyncApp26.Infrastructure\SyncApp26.Infrastructure.csproj" />
     <ProjectReference Include="..\SyncApp26.Application\SyncApp26.Application.csproj" />
+    <ProjectReference Include="..\SyncApp26.Shared\SyncApp26.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -32,10 +32,5 @@ namespace SyncApp26.Application.Services
         {
             await _departmentRepository.UpdateDepartmentAsync(department);
         }
-
-        public async Task DeleteDepartmentAsync(Guid departmentId)
-        {
-            await _departmentRepository.DeleteDepartmentAsync(departmentId);
-        }
     }
 }

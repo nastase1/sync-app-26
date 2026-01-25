@@ -8,6 +8,5 @@ namespace SyncApp26.Domain.IRepositories
         Task<IEnumerable<Department>> GetAllDepartmentsAsync();
         Task AddDepartmentAsync(Department department);
         Task UpdateDepartmentAsync(Department department);
-        Task DeleteDepartmentAsync(Guid id);
     }
 }

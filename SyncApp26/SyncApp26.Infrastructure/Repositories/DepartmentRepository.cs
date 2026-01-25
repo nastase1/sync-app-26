@@ -16,12 +16,16 @@ namespace SyncApp26.Infrastructure.Repositories
 
         public async Task<Department?> GetDepartmentByIdAsync(Guid id)
         {
-            return await _context.Departments.FindAsync(id);
+            return await _context.Departments
+                .Where(d => d.DeletedAt == null)
+                .FirstOrDefaultAsync(d => d.Id == id);
         }
 
         public async Task<IEnumerable<Department>> GetAllDepartmentsAsync()
         {
-            return await _context.Departments.ToListAsync();
+            return await _context.Departments
+                .Where(d => d.DeletedAt == null)
+                .ToListAsync();
         }
 
         public async Task AddDepartmentAsync(Department department)
@@ -34,16 +38,6 @@ namespace SyncApp26.Infrastructure.Repositories
         {
             _context.Departments.Update(department);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteDepartmentAsync(Guid id)
-        {
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
-            {
-                _context.Departments.Remove(department);
-                await _context.SaveChangesAsync();
-            }
         }
     }
 }

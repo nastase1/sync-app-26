@@ -31,6 +31,9 @@
               },
               "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj": {
                 "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj"
+              },
+              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
+                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj"
               }
             }
           }
@@ -54,6 +57,10 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.8, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.6.2, )"
             }
           },
           "imports": [
@@ -263,6 +270,65 @@
               "version": "[9.0.0, )"
             }
           },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj",
+        "projectName": "SyncApp26.Shared",
+        "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj",
+        "packagesPath": "C:\\Users\\stanc\\.nuget\\packages\\",
+        "outputPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\stanc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
           "imports": [
             "net461",
             "net462",

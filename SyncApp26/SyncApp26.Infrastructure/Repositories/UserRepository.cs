@@ -1,6 +1,7 @@
 using SyncApp26.Domain.IRepositories;
 using SyncApp26.Domain.Entities;
 using SyncApp26.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace SyncApp26.Infrastructure.Repositories
 {
@@ -13,28 +14,32 @@ namespace SyncApp26.Infrastructure.Repositories
             _context = context;
         }
 
-        public Task<User?> GetUserByIdAsync(Guid id)
+        public async Task<User?> GetUserByIdAsync(Guid id)
         {
-            var result = _context.Users.FindAsync(id);
-            return result.AsTask();
+            return await _context.Users
+                .Where(u => u.DeletedAt == null)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            var result = _context.Users.AsEnumerable();
-            return Task.FromResult(result);
+            return await _context.Users
+                .Where(u => u.DeletedAt == null)
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<User>> GetUsersByDepartmentIdAsync(Guid departmentId)
+        public async Task<IEnumerable<User>> GetUsersByDepartmentIdAsync(Guid departmentId)
         {
-            var result = _context.Users.Where(u => u.DepartmentId == departmentId).AsEnumerable();
-            return Task.FromResult(result);
+            return await _context.Users
+                .Where(u => u.DepartmentId == departmentId && u.DeletedAt == null)
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<User>> GetUsersAssignedToAsync(Guid assignedToId)
+        public async Task<IEnumerable<User>> GetUsersAssignedToAsync(Guid assignedToId)
         {
-            var result = _context.Users.Where(u => u.AssignedToId == assignedToId).AsEnumerable();
-            return Task.FromResult(result);
+            return await _context.Users
+                .Where(u => u.AssignedToId == assignedToId && u.DeletedAt == null)
+                .ToListAsync();
         }
 
         public async Task AddUserAsync(User user)
@@ -54,7 +59,8 @@ namespace SyncApp26.Infrastructure.Repositories
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                user.DeletedAt = DateTime.UtcNow;
+                _context.Users.Update(user);
                 await _context.SaveChangesAsync();
             }
         }
