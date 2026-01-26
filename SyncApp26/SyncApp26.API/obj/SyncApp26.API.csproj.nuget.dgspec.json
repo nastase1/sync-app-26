@@ -1,39 +1,45 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj": {}
+    "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj": {}
   },
   "projects": {
-    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj": {
+    "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj",
+        "projectUniqueName": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj",
         "projectName": "SyncApp26.API",
-        "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj",
-        "packagesPath": "C:\\Users\\stanc\\.nuget\\packages\\",
-        "outputPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\obj\\",
+        "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj",
+        "packagesPath": "C:\\Users\\nasta\\.nuget\\packages\\",
+        "outputPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\stanc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\nasta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj": {
-                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj"
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj"
               },
-              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj": {
-                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj"
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj"
               },
-              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
-                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj"
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj"
               }
             }
           }
@@ -82,34 +88,40 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj": {
+    "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj",
+        "projectUniqueName": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj",
         "projectName": "SyncApp26.Application",
-        "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj",
-        "packagesPath": "C:\\Users\\stanc\\.nuget\\packages\\",
-        "outputPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\obj\\",
+        "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj",
+        "packagesPath": "C:\\Users\\nasta\\.nuget\\packages\\",
+        "outputPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\stanc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\nasta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
-                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj"
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj"
               }
             }
           }
@@ -145,26 +157,32 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
+    "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj",
+        "projectUniqueName": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj",
         "projectName": "SyncApp26.Domain",
-        "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj",
-        "packagesPath": "C:\\Users\\stanc\\.nuget\\packages\\",
-        "outputPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\obj\\",
+        "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj",
+        "packagesPath": "C:\\Users\\nasta\\.nuget\\packages\\",
+        "outputPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\stanc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\nasta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -204,37 +222,43 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj": {
+    "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj",
         "projectName": "SyncApp26.Infrastructure",
-        "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\stanc\\.nuget\\packages\\",
-        "outputPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\obj\\",
+        "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\SyncApp26.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\nasta\\.nuget\\packages\\",
+        "outputPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\stanc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\nasta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj": {
-                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj"
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Application\\SyncApp26.Application.csproj"
               },
-              "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
-                "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj"
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj"
               }
             }
           }
@@ -286,26 +310,32 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
+    "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj",
+        "projectUniqueName": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj",
         "projectName": "SyncApp26.Shared",
-        "projectPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj",
-        "packagesPath": "C:\\Users\\stanc\\.nuget\\packages\\",
-        "outputPath": "E:\\Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\obj\\",
+        "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj",
+        "packagesPath": "C:\\Users\\nasta\\.nuget\\packages\\",
+        "outputPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\stanc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\nasta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -345,7 +375,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
