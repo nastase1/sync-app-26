@@ -46,6 +46,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Services
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICsvSyncService, CsvSyncService>();
 
 var app = builder.Build();
 

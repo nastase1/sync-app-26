@@ -1084,7 +1084,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
-          "SyncApp26.Domain": "1.0.0"
+          "SyncApp26.Domain": "1.0.0",
+          "SyncApp26.Shared": "1.0.0"
         },
         "compile": {
           "bin/placeholder/SyncApp26.Application.dll": {}
@@ -1101,6 +1102,16 @@
         },
         "runtime": {
           "bin/placeholder/SyncApp26.Domain.dll": {}
+        }
+      },
+      "SyncApp26.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/SyncApp26.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SyncApp26.Shared.dll": {}
         }
       }
     }
@@ -3103,6 +3114,11 @@
       "type": "project",
       "path": "../SyncApp26.Domain/SyncApp26.Domain.csproj",
       "msbuildProject": "../SyncApp26.Domain/SyncApp26.Domain.csproj"
+    },
+    "SyncApp26.Shared/1.0.0": {
+      "type": "project",
+      "path": "../SyncApp26.Shared/SyncApp26.Shared.csproj",
+      "msbuildProject": "../SyncApp26.Shared/SyncApp26.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {

@@ -165,27 +165,72 @@ export class UserSyncService {
   }
 
   /**
-   * Upload CSV file and compare with database (placeholder for future implementation)
+   * Upload CSV file and compare with database
    */
   uploadAndCompare(file: File): Observable<UserComparison[]> {
-    // TODO: Implement CSV comparison when backend endpoint is ready
-    console.warn('CSV comparison endpoint not yet implemented');
-    return of([]);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<UserComparison[]>(`${environment.apiUrl}/CsvSync/upload`, formData).pipe(
+      tap((comparisons) => {
+        this.currentComparisonSubject.next(comparisons);
+      }),
+      catchError(error => {
+        console.error('Error uploading CSV:', error);
+        this.currentComparisonSubject.next(null);
+        return of([]);
+      })
+    );
   }
 
   /**
-   * Sync selected users with resolved conflicts (placeholder for future implementation)
+   * Sync selected users with resolved conflicts
    */
   syncUsers(comparisons: UserComparison[]): Observable<SyncResult> {
-    // TODO: Implement sync when backend endpoint is ready
-    console.warn('Sync endpoint not yet implemented');
-    return of({
-      success: false,
-      recordsProcessed: 0,
-      recordsFailed: 0,
-      recordsSkipped: 0,
-      message: 'Sync functionality not yet implemented'
-    });
+    // Filter only selected items and map to sync request format
+    const selectedItems = comparisons
+      .filter(c => c.selected)
+      .map(c => ({
+        id: c.id,
+        status: c.status,
+        csvData: c.csvUser ? {
+          firstName: c.csvUser.firstName,
+          lastName: c.csvUser.lastName,
+          email: c.csvUser.email,
+          departmentName: c.csvUser.departmentName,
+          assignedToEmail: null // You may need to map this if you store it
+        } : null,
+        conflicts: c.conflicts.map(conflict => ({
+          field: conflict.field,
+          dbValue: conflict.dbValue,
+          csvValue: conflict.csvValue,
+          selectedValue: conflict.selectedValue,
+          selected: conflict.selected
+        }))
+      }));
+
+    const syncRequest = { items: selectedItems };
+
+    return this.http.post<SyncResult>(`${environment.apiUrl}/CsvSync/sync`, syncRequest).pipe(
+      tap((result) => {
+        if (result.success) {
+          // Refresh users list after successful sync
+          this.loadUsers();
+          this.currentComparisonSubject.next(null);
+        }
+      }),
+      catchError(error => {
+        console.error('Error syncing users:', error);
+        return of({
+          success: false,
+          recordsProcessed: 0,
+          recordsFailed: 0,
+          recordsSkipped: 0,
+          message: error.error?.error || 'Sync failed',
+          errors: [error.message]
+        });
+      })
+    );
   }
 
   /**

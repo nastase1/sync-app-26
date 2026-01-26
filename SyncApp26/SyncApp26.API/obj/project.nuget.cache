@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "e+nNDkZn/80=",
+  "dgSpecHash": "UeUOo3a4Byo=",
   "success": true,
   "projectFilePath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.API\\SyncApp26.API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\nasta\\.nuget\\packages\\csvhelper\\33.1.0\\csvhelper.33.1.0.nupkg.sha512",
     "C:\\Users\\nasta\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.8\\microsoft.aspnetcore.openapi.9.0.8.nupkg.sha512",
     "C:\\Users\\nasta\\.nuget\\packages\\microsoft.data.sqlite.core\\9.0.0\\microsoft.data.sqlite.core.9.0.0.nupkg.sha512",
     "C:\\Users\\nasta\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.0\\microsoft.entityframeworkcore.9.0.0.nupkg.sha512",
