@@ -4,6 +4,7 @@ using SyncApp26.Application.Services;
 using SyncApp26.Domain.IRepositories;
 using SyncApp26.Infrastructure.Context;
 using SyncApp26.Infrastructure.Repositories;
+using SyncApp26.Infrastructure.Data;
 using Microsoft.Data.Sqlite;
 using System.IO;
 
@@ -46,6 +47,23 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
+
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.EnsureCreatedAsync();
+        await DatabaseSeeder.SeedAsync(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
