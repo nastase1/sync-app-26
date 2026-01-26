@@ -13,13 +13,17 @@ export enum SyncStatus {
 
 export interface User {
   id: string;
-  name: string;
-  dateOfBirth: Date;
-  department: string;
-  lineManagerId?: string;
-  lineManagerName?: string;
-  role: UserRole;
-  email?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  departmentId: string;
+  departmentName: string;
+  assignedToId?: string;
+  assignedToName?: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  // Computed properties
+  role?: UserRole;  // Calculated based on whether user has direct reports
 }
 
 export interface Department {

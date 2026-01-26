@@ -66,11 +66,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       map(([users, stats]) => {
         // Filter users
         let filtered = users.filter(user => {
+          const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
           const matchesSearch = !this.searchQuery || 
-            user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            user.email?.toLowerCase().includes(this.searchQuery.toLowerCase());
+            fullName.includes(this.searchQuery.toLowerCase()) ||
+            user.email.toLowerCase().includes(this.searchQuery.toLowerCase());
           const matchesDepartment = this.selectedDepartment === 'all' || 
-            user.department === this.selectedDepartment;
+            user.departmentName === this.selectedDepartment;
           const matchesRole = this.selectedRole === 'all' || 
             user.role === this.selectedRole;
           return matchesSearch && matchesDepartment && matchesRole;
