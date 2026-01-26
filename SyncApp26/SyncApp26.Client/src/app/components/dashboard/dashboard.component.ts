@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Observable, Subject, combineLatest, BehaviorSubject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { UserSyncService } from '../../services/user-sync.service';
 import { User, UserComparison, UserRole, Department } from '../../models/csv-sync.model';
@@ -25,13 +25,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
   departments$!: Observable<Department[]>;
   currentComparison$!: Observable<UserComparison[] | null>;
   
-  currentPage = 1;
+  private currentPage$ = new BehaviorSubject<number>(1);
   pageSize = 10;
   totalItems = 0;
   
-  searchQuery = '';
-  selectedDepartment = 'all';
-  selectedRole: UserRole | 'all' = 'all';
+  get currentPage(): number { return this.currentPage$.value; }
+  set currentPage(value: number) { this.currentPage$.next(value); }
+  
+  private searchQuery$ = new BehaviorSubject<string>('');
+  private selectedDepartment$ = new BehaviorSubject<string>('all');
+  private selectedRole$ = new BehaviorSubject<UserRole | 'all'>('all');
+  
+  get searchQuery(): string { return this.searchQuery$.value; }
+  set searchQuery(value: string) { this.searchQuery$.next(value); }
+  
+  get selectedDepartment(): string { return this.selectedDepartment$.value; }
+  set selectedDepartment(value: string) { this.selectedDepartment$.next(value); }
+  
+  get selectedRole(): UserRole | 'all' { return this.selectedRole$.value; }
+  set selectedRole(value: UserRole | 'all') { this.selectedRole$.next(value); }
   isUploading = false;
   isSyncing = false;
   showComparison = false;
@@ -61,26 +73,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
     
     this.paginatedUsers$ = combineLatest([
       this.users$,
-      this.stats$
+      this.stats$,
+      this.searchQuery$,
+      this.selectedDepartment$,
+      this.selectedRole$,
+      this.currentPage$
     ]).pipe(
-      map(([users, stats]) => {
+      map(([users, stats, searchQuery, selectedDepartment, selectedRole, currentPage]) => {
         // Filter users
         let filtered = users.filter(user => {
           const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-          const matchesSearch = !this.searchQuery || 
-            fullName.includes(this.searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(this.searchQuery.toLowerCase());
-          const matchesDepartment = this.selectedDepartment === 'all' || 
-            user.departmentName === this.selectedDepartment;
-          const matchesRole = this.selectedRole === 'all' || 
-            user.role === this.selectedRole;
+          const matchesSearch = !searchQuery || 
+            fullName.includes(searchQuery.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesDepartment = selectedDepartment === 'all' || 
+            user.departmentName === selectedDepartment;
+          const matchesRole = selectedRole === 'all' || 
+            user.role === selectedRole;
           return matchesSearch && matchesDepartment && matchesRole;
         });
         
         this.totalItems = filtered.length;
         
         // Paginate
-        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const startIndex = (currentPage - 1) * this.pageSize;
         return filtered.slice(startIndex, startIndex + this.pageSize);
       })
     );
