@@ -146,5 +146,152 @@ namespace SyncApp26.Application.Services
                 Email = user.Email
             };
         }
+
+        public async Task<SyncResultDTO> SyncUsersAsync(List<UserComparisonDTO> usersToSync)
+        {
+            var result = new SyncResultDTO
+            {
+                Success = true,
+                RecordsProcessed = 0,
+                RecordsFailed = 0,
+                RecordsSkipped = 0,
+                Errors = new List<string>()
+            };
+
+            var departments = await _departmentService.GetAllDepartmentsAsync();
+
+            foreach (var comparison in usersToSync)
+            {
+                try
+                {
+                    if (comparison.Status == "new" && comparison.CsvUser != null)
+                    {
+                        // Create new user
+                        await CreateUserFromCsv(comparison.CsvUser, departments);
+                        result.RecordsProcessed++;
+                    }
+                    else if (comparison.Status == "modified" && comparison.CsvUser != null)
+                    {
+                        // Update existing user with resolved conflicts
+                        await UpdateUserFromCsv(comparison, departments);
+                        result.RecordsProcessed++;
+                    }
+                    else if (comparison.Status == "deleted")
+                    {
+                        // Soft delete user
+                        if (Guid.TryParse(comparison.Id, out var userId))
+                        {
+                            await _userService.DeleteUserAsync(userId);
+                            result.RecordsProcessed++;
+                        }
+                        else
+                        {
+                            result.RecordsSkipped++;
+                            result.Errors?.Add($"Invalid user ID for deletion: {comparison.Id}");
+                        }
+                    }
+                    else if (comparison.Status == "unchanged")
+                    {
+                        result.RecordsSkipped++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.RecordsFailed++;
+                    result.Errors?.Add($"Error processing user {comparison.Id}: {ex.Message}");
+                    result.Success = false;
+                }
+            }
+
+            result.Message = result.Success
+                ? $"Sync completed successfully: {result.RecordsProcessed} processed, {result.RecordsSkipped} skipped"
+                : $"Sync completed with errors: {result.RecordsProcessed} processed, {result.RecordsFailed} failed, {result.RecordsSkipped} skipped";
+
+            return result;
+        }
+
+        private async Task CreateUserFromCsv(CsvUserDTO csvUser, IEnumerable<Domain.Entities.Department> departments)
+        {
+            // Parse name
+            var nameParts = csvUser.Name.Split(' ', 2);
+            var firstName = nameParts.Length > 0 ? nameParts[0] : csvUser.Name;
+            var lastName = nameParts.Length > 1 ? nameParts[1] : "";
+
+            // Find department by name
+            var department = departments.FirstOrDefault(d =>
+                d.Name.Equals(csvUser.Department, StringComparison.OrdinalIgnoreCase));
+
+            if (department == null)
+            {
+                throw new Exception($"Department '{csvUser.Department}' not found");
+            }
+
+            // Parse AssignedToId if provided
+            Guid? assignedToId = null;
+            if (!string.IsNullOrEmpty(csvUser.LineManagerId) && Guid.TryParse(csvUser.LineManagerId, out var parsedId))
+            {
+                assignedToId = parsedId;
+            }
+
+            var user = new Domain.Entities.User
+            {
+                Id = Guid.NewGuid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = csvUser.Email,
+                DepartmentId = department.Id,
+                AssignedToId = assignedToId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _userService.AddUserAsync(user);
+        }
+
+        private async Task UpdateUserFromCsv(UserComparisonDTO comparison, IEnumerable<Domain.Entities.Department> departments)
+        {
+            if (!Guid.TryParse(comparison.Id, out var userId))
+            {
+                throw new Exception($"Invalid user ID: {comparison.Id}");
+            }
+
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception($"User not found: {userId}");
+            }
+
+            // Apply changes based on resolved conflicts
+            foreach (var conflict in comparison.Conflicts)
+            {
+                if (conflict.SelectedValue == "csv" && comparison.CsvUser != null)
+                {
+                    switch (conflict.Field.ToLower())
+                    {
+                        case "name":
+                            var nameParts = comparison.CsvUser.Name.Split(' ', 2);
+                            user.FirstName = nameParts.Length > 0 ? nameParts[0] : comparison.CsvUser.Name;
+                            user.LastName = nameParts.Length > 1 ? nameParts[1] : "";
+                            break;
+
+                        case "email":
+                            user.Email = comparison.CsvUser.Email;
+                            break;
+
+                        case "department":
+                            var department = departments.FirstOrDefault(d =>
+                                d.Name.Equals(comparison.CsvUser.Department, StringComparison.OrdinalIgnoreCase));
+                            if (department != null)
+                            {
+                                user.DepartmentId = department.Id;
+                            }
+                            break;
+                    }
+                }
+                // If selectedValue is "db", keep existing value (do nothing)
+            }
+
+            user.UpdatedAt = DateTime.UtcNow;
+            await _userService.UpdateUserAsync(user);
+        }
     }
 }

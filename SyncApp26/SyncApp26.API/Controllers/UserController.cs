@@ -345,5 +345,40 @@ namespace SyncApp26.API.Controllers
                 return StatusCode(500, new { message = "Error processing CSV file", error = ex.Message });
             }
         }
+
+        [HttpPost("sync")]
+        public async Task<ActionResult<SyncResultDTO>> SyncUsers([FromBody] List<UserComparisonDTO> usersToSync)
+        {
+            if (usersToSync == null || !usersToSync.Any())
+            {
+                return BadRequest(new SyncResultDTO
+                {
+                    Success = false,
+                    Message = "No users provided for synchronization",
+                    RecordsProcessed = 0,
+                    RecordsFailed = 0,
+                    RecordsSkipped = 0,
+                    Errors = new List<string> { "Empty request body" }
+                });
+            }
+
+            try
+            {
+                var result = await _csvSyncService.SyncUsersAsync(usersToSync);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new SyncResultDTO
+                {
+                    Success = false,
+                    Message = "Error synchronizing users",
+                    RecordsProcessed = 0,
+                    RecordsFailed = usersToSync.Count,
+                    RecordsSkipped = 0,
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
     }
 }

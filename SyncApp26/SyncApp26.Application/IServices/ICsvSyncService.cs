@@ -5,5 +5,6 @@ namespace SyncApp26.Application.IServices
     public interface ICsvSyncService
     {
         Task<List<UserComparisonDTO>> CompareUsersAsync(List<CsvUserDTO> csvUsers);
+        Task<SyncResultDTO> SyncUsersAsync(List<UserComparisonDTO> usersToSync);
     }
 }
