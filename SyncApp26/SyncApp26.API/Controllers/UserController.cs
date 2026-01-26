@@ -3,6 +3,7 @@ using SyncApp26.Application.IServices;
 using SyncApp26.Domain.Entities;
 using SyncApp26.Shared.DTOs.Request.User;
 using SyncApp26.Shared.DTOs.Response.User;
+using System.ComponentModel.DataAnnotations;
 
 namespace SyncApp26.API.Controllers
 {
@@ -28,13 +29,6 @@ namespace SyncApp26.API.Controllers
                 return NotFound();
             }
 
-            var department = await _departmentService.GetDepartmentByIdAsync(user.DepartmentId);
-            User? assignedTo = null;
-            if (user.AssignedToId.HasValue)
-            {
-                assignedTo = await _userService.GetUserByIdAsync(user.AssignedToId.Value);
-            }
-
             return Ok(new UserGETResponseDTO
             {
                 Id = user.Id,
@@ -42,9 +36,9 @@ namespace SyncApp26.API.Controllers
                 LastName = user.LastName,
                 Email = user.Email,
                 DepartmentId = user.DepartmentId,
-                DepartmentName = department?.Name ?? "Unknown",
+                DepartmentName = user.Department?.Name ?? "Unknown",
                 AssignedToId = user.AssignedToId,
-                AssignedToName = assignedTo != null ? $"{assignedTo.FirstName} {assignedTo.LastName}" : null,
+                AssignedToName = user.AssignedTo != null ? $"{user.AssignedTo.FirstName} {user.AssignedTo.LastName}" : null,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             });
@@ -54,31 +48,19 @@ namespace SyncApp26.API.Controllers
         public async Task<ActionResult<IEnumerable<UserGETResponseDTO>>> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
-            var responseList = new List<UserGETResponseDTO>();
-
-            foreach (var user in users)
+            var responseList = users.Select(user => new UserGETResponseDTO
             {
-                var department = await _departmentService.GetDepartmentByIdAsync(user.DepartmentId);
-                User? assignedTo = null;
-                if (user.AssignedToId.HasValue)
-                {
-                    assignedTo = await _userService.GetUserByIdAsync(user.AssignedToId.Value);
-                }
-
-                responseList.Add(new UserGETResponseDTO
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    DepartmentId = user.DepartmentId,
-                    DepartmentName = department?.Name ?? "Unknown",
-                    AssignedToId = user.AssignedToId,
-                    AssignedToName = assignedTo != null ? $"{assignedTo.FirstName} {assignedTo.LastName}" : null,
-                    CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt
-                });
-            }
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                DepartmentId = user.DepartmentId,
+                DepartmentName = user.Department?.Name ?? "Unknown",
+                AssignedToId = user.AssignedToId,
+                AssignedToName = user.AssignedTo != null ? $"{user.AssignedTo.FirstName} {user.AssignedTo.LastName}" : null,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            }).ToList();
 
             return Ok(responseList);
         }
@@ -87,37 +69,30 @@ namespace SyncApp26.API.Controllers
         public async Task<ActionResult<IEnumerable<UserGETResponseDTO>>> GetUsersByDepartment(Guid departmentId)
         {
             var users = await _userService.GetUsersByDepartmentIdAsync(departmentId);
-            var department = await _departmentService.GetDepartmentByIdAsync(departmentId);
+            var usersList = users.ToList();
 
-            if (department == null)
+            if (!usersList.Any())
             {
-                return NotFound(new { message = "Department not found" });
-            }
-
-            var responseList = new List<UserGETResponseDTO>();
-
-            foreach (var user in users)
-            {
-                User? assignedTo = null;
-                if (user.AssignedToId.HasValue)
+                var department = await _departmentService.GetDepartmentByIdAsync(departmentId);
+                if (department == null)
                 {
-                    assignedTo = await _userService.GetUserByIdAsync(user.AssignedToId.Value);
+                    return NotFound(new { message = "Department not found" });
                 }
-
-                responseList.Add(new UserGETResponseDTO
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    DepartmentId = user.DepartmentId,
-                    DepartmentName = department.Name,
-                    AssignedToId = user.AssignedToId,
-                    AssignedToName = assignedTo != null ? $"{assignedTo.FirstName} {assignedTo.LastName}" : null,
-                    CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt
-                });
             }
+
+            var responseList = usersList.Select(user => new UserGETResponseDTO
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                DepartmentId = user.DepartmentId,
+                DepartmentName = user.Department?.Name ?? "Unknown",
+                AssignedToId = user.AssignedToId,
+                AssignedToName = user.AssignedTo != null ? $"{user.AssignedTo.FirstName} {user.AssignedTo.LastName}" : null,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            }).ToList();
 
             return Ok(responseList);
         }
@@ -125,34 +100,26 @@ namespace SyncApp26.API.Controllers
         [HttpGet("assigned-to/{assignedToId}")]
         public async Task<ActionResult<IEnumerable<UserGETResponseDTO>>> GetUsersAssignedTo(Guid assignedToId)
         {
-            var users = await _userService.GetUsersAssignedToAsync(assignedToId);
             var lineManager = await _userService.GetUserByIdAsync(assignedToId);
-
             if (lineManager == null)
             {
                 return NotFound(new { message = "Line manager not found" });
             }
 
-            var responseList = new List<UserGETResponseDTO>();
-
-            foreach (var user in users)
+            var users = await _userService.GetUsersAssignedToAsync(assignedToId);
+            var responseList = users.Select(user => new UserGETResponseDTO
             {
-                var department = await _departmentService.GetDepartmentByIdAsync(user.DepartmentId);
-
-                responseList.Add(new UserGETResponseDTO
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    DepartmentId = user.DepartmentId,
-                    DepartmentName = department?.Name ?? "Unknown",
-                    AssignedToId = user.AssignedToId,
-                    AssignedToName = $"{lineManager.FirstName} {lineManager.LastName}",
-                    CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt
-                });
-            }
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                DepartmentId = user.DepartmentId,
+                DepartmentName = user.Department?.Name ?? "Unknown",
+                AssignedToId = user.AssignedToId,
+                AssignedToName = $"{lineManager.FirstName} {lineManager.LastName}",
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            }).ToList();
 
             return Ok(responseList);
         }
@@ -168,6 +135,16 @@ namespace SyncApp26.API.Controllers
                 {
                     Success = false,
                     Message = "FirstName, LastName, and Email are required"
+                });
+            }
+
+            // Validate email format
+            if (!new EmailAddressAttribute().IsValid(userRequestDTO.Email))
+            {
+                return BadRequest(new UserResponseDTO
+                {
+                    Success = false,
+                    Message = "Invalid email format"
                 });
             }
 
@@ -240,6 +217,26 @@ namespace SyncApp26.API.Controllers
                 });
             }
 
+            // Validate email format
+            if (!new EmailAddressAttribute().IsValid(userRequestDTO.Email))
+            {
+                return BadRequest(new UserResponseDTO
+                {
+                    Success = false,
+                    Message = "Invalid email format"
+                });
+            }
+
+            // Check for circular assignment (user cannot be assigned to themselves)
+            if (userRequestDTO.AssignedToId.HasValue && userRequestDTO.AssignedToId.Value == id)
+            {
+                return BadRequest(new UserResponseDTO
+                {
+                    Success = false,
+                    Message = "User cannot be assigned to themselves"
+                });
+            }
+
             // Verify department exists
             var department = await _departmentService.GetDepartmentByIdAsync(userRequestDTO.DepartmentId);
             if (department == null)
@@ -261,6 +258,16 @@ namespace SyncApp26.API.Controllers
                     {
                         Success = false,
                         Message = "Assigned to user not found"
+                    });
+                }
+
+                // Check for circular reference: ensure the assignedTo user is not already managed by this user
+                if (assignedTo.AssignedToId == id)
+                {
+                    return BadRequest(new UserResponseDTO
+                    {
+                        Success = false,
+                        Message = "Circular assignment detected: Cannot assign a user to someone who reports to them"
                     });
                 }
             }

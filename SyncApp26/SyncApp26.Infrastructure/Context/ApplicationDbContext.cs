@@ -21,7 +21,7 @@ namespace SyncApp26.Infrastructure.Context
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                
+
                 entity.Property(e => e.FirstName)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -39,13 +39,20 @@ namespace SyncApp26.Infrastructure.Context
 
                 // Configure relationship with Department
                 entity.HasOne(e => e.Department)
-                    .WithMany()
+                    .WithMany(d => d.Users)
                     .HasForeignKey(e => e.DepartmentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Configure self-referencing relationship for line manager
+                entity.HasOne(e => e.AssignedTo)
+                    .WithMany(u => u.AssignedUsers)
+                    .HasForeignKey(e => e.AssignedToId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 // Create indexes
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.DepartmentId);
+                entity.HasIndex(e => e.AssignedToId);
             });
 
             // Configure Department entity

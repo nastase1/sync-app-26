@@ -17,6 +17,8 @@ namespace SyncApp26.Infrastructure.Repositories
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return await _context.Users
+                .Include(u => u.Department)
+                .Include(u => u.AssignedTo)
                 .Where(u => u.DeletedAt == null)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
@@ -24,6 +26,8 @@ namespace SyncApp26.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _context.Users
+                .Include(u => u.Department)
+                .Include(u => u.AssignedTo)
                 .Where(u => u.DeletedAt == null)
                 .ToListAsync();
         }
@@ -31,6 +35,8 @@ namespace SyncApp26.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetUsersByDepartmentIdAsync(Guid departmentId)
         {
             return await _context.Users
+                .Include(u => u.Department)
+                .Include(u => u.AssignedTo)
                 .Where(u => u.DepartmentId == departmentId && u.DeletedAt == null)
                 .ToListAsync();
         }
@@ -38,6 +44,8 @@ namespace SyncApp26.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetUsersAssignedToAsync(Guid assignedToId)
         {
             return await _context.Users
+                .Include(u => u.Department)
+                .Include(u => u.AssignedTo)
                 .Where(u => u.AssignedToId == assignedToId && u.DeletedAt == null)
                 .ToListAsync();
         }
