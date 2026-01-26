@@ -4,6 +4,7 @@ export const environment = {
   endpoints: {
     users: '/users',
     usersCompare: '/users/compare',
-    usersSync: '/users/sync'
+    usersSync: '/users/sync',
+    departments: '/department'
   }
 };
