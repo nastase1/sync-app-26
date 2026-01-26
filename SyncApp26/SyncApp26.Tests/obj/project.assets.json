@@ -1003,7 +1003,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
-          "SyncApp26.Domain": "1.0.0"
+          "SyncApp26.Domain": "1.0.0",
+          "SyncApp26.Shared": "1.0.0"
         },
         "compile": {
           "bin/placeholder/SyncApp26.Application.dll": {}

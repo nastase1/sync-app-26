@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SyncApp26.Domain\SyncApp26.Domain.csproj" />
+    <ProjectReference Include="..\SyncApp26.Shared\SyncApp26.Shared.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

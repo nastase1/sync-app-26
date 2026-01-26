@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SyncApp26.Application.IServices;
+using SyncApp26.Application.Services;
 using SyncApp26.Domain.Entities;
 using SyncApp26.Shared.DTOs.Request.User;
 using SyncApp26.Shared.DTOs.Response.User;
@@ -12,11 +13,19 @@ namespace SyncApp26.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IDepartmentService _departmentService;
+        private readonly CsvParserService _csvParserService;
+        private readonly ICsvSyncService _csvSyncService;
 
-        public UserController(IUserService userService, IDepartmentService departmentService)
+        public UserController(
+            IUserService userService,
+            IDepartmentService departmentService,
+            CsvParserService csvParserService,
+            ICsvSyncService csvSyncService)
         {
             _userService = userService;
             _departmentService = departmentService;
+            _csvParserService = csvParserService;
+            _csvSyncService = csvSyncService;
         }
 
         [HttpGet("{id}")]
@@ -301,6 +310,40 @@ namespace SyncApp26.API.Controllers
                 Success = true,
                 Message = "User deleted successfully"
             });
+        }
+
+        [HttpPost("compare")]
+        public async Task<ActionResult<List<UserComparisonDTO>>> CompareUsers(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { message = "No file uploaded" });
+            }
+
+            if (!file.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(new { message = "File must be a CSV" });
+            }
+
+            try
+            {
+                using (var stream = file.OpenReadStream())
+                {
+                    var csvUsers = _csvParserService.ParseCsv(stream);
+
+                    if (!csvUsers.Any())
+                    {
+                        return BadRequest(new { message = "CSV file is empty or invalid" });
+                    }
+
+                    var comparisons = await _csvSyncService.CompareUsersAsync(csvUsers);
+                    return Ok(comparisons);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error processing CSV file", error = ex.Message });
+            }
         }
     }
 }
