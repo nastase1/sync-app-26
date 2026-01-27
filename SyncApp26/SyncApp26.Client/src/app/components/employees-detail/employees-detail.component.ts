@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserSyncService } from '../../services/user-sync.service';
 import { User, UserRole, Department } from '../../models/csv-sync.model';
@@ -21,12 +21,21 @@ export class EmployeesDetailComponent implements OnInit {
   departments$!: Observable<Department[]>;
   selectedUser: User | null = null;
   
-  currentPage = 1;
+  private currentPage$ = new BehaviorSubject<number>(1);
   pageSize = 10;
   totalItems = 0;
   
-  searchQuery = '';
-  selectedDepartment = 'all';
+  get currentPage(): number { return this.currentPage$.value; }
+  set currentPage(value: number) { this.currentPage$.next(value); }
+  
+  private searchQuery$ = new BehaviorSubject<string>('');
+  private selectedDepartment$ = new BehaviorSubject<string>('all');
+  
+  get searchQuery(): string { return this.searchQuery$.value; }
+  set searchQuery(value: string) { this.searchQuery$.next(value); }
+  
+  get selectedDepartment(): string { return this.selectedDepartment$.value; }
+  set selectedDepartment(value: string) { this.selectedDepartment$.next(value); }
   
   UserRole = UserRole;
 
@@ -49,23 +58,29 @@ export class EmployeesDetailComponent implements OnInit {
       }
     });
     
-    this.paginatedUsers$ = this.users$.pipe(
-      map(users => {
+    this.paginatedUsers$ = combineLatest([
+      this.users$,
+      this.searchQuery$,
+      this.selectedDepartment$,
+      this.currentPage$
+    ]).pipe(
+      map(([users, searchQuery, selectedDepartment, currentPage]) => {
         // Filter users
         let filtered = users.filter(user => {
-          const matchesSearch = !this.searchQuery || 
-            user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            user.email?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            user.department.toLowerCase().includes(this.searchQuery.toLowerCase());
-          const matchesDepartment = this.selectedDepartment === 'all' || 
-            user.department === this.selectedDepartment;
+          const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+          const matchesSearch = !searchQuery || 
+            fullName.includes(searchQuery.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.departmentName.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesDepartment = selectedDepartment === 'all' || 
+            user.departmentName === selectedDepartment;
           return matchesSearch && matchesDepartment;
         });
         
         this.totalItems = filtered.length;
         
         // Paginate
-        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const startIndex = (currentPage - 1) * this.pageSize;
         return filtered.slice(startIndex, startIndex + this.pageSize);
       })
     );

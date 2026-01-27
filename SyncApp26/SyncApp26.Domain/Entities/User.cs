@@ -12,6 +12,9 @@ namespace SyncApp26.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 
+        // Navigation properties
         public Department Department { get; set; }
+        public User? AssignedTo { get; set; }  // Line manager
+        public ICollection<User> AssignedUsers { get; set; } = new List<User>();  // Direct reports
     }
 }

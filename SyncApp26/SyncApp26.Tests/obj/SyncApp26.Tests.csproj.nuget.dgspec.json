@@ -60,6 +60,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "CsvHelper": {
+              "target": "Package",
+              "version": "[33.1.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.8, )"
@@ -122,6 +126,9 @@
             "projectReferences": {
               "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj": {
                 "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Domain\\SyncApp26.Domain.csproj"
+              },
+              "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj": {
+                "projectPath": "C:\\Practica Siemens\\sync-app-26\\SyncApp26\\SyncApp26.Shared\\SyncApp26.Shared.csproj"
               }
             }
           }
