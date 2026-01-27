@@ -35,18 +35,11 @@ public class CsvSyncService : ICsvSyncService
         foreach (var csvUser in csvUsers)
         {
             var email = csvUser.Email.ToLower();
-            var comparison = new UserComparisonDTO
-            {
-                Id = Guid.NewGuid().ToString(),
-                Status = "unchanged",
-                Selected = false
-            };
 
             if (dbUserMap.TryGetValue(email, out var dbUser))
             {
                 // User exists - compare fields
-                comparison.DbUser = MapToUserGETResponseDTO(dbUser, dbUsers);
-                comparison.CsvUser = new CsvUserDataDTO
+                var csvUserData = new CsvUserDataDTO
                 {
                     FirstName = csvUser.FirstName,
                     LastName = csvUser.LastName,
@@ -110,29 +103,41 @@ public class CsvSyncService : ICsvSyncService
                     });
                 }
 
-                comparison.Conflicts = conflicts;
-                comparison.Status = conflicts.Count > 0 ? "modified" : "unchanged";
-                comparison.Selected = conflicts.Count > 0; // Auto-select modified records
+                var comparison = new UserComparisonDTO
+                {
+                    Id = dbUser.Id.ToString(), // Use actual database user ID
+                    Status = conflicts.Count > 0 ? "modified" : "unchanged",
+                    DbUser = MapToUserGETResponseDTO(dbUser, dbUsers),
+                    CsvUser = csvUserData,
+                    Conflicts = conflicts,
+                    Selected = conflicts.Count > 0 // Auto-select modified records
+                };
+
+                comparisons.Add(comparison);
             }
             else
             {
                 // New user from CSV
-                comparison.Status = "new";
-                comparison.CsvUser = new CsvUserDataDTO
+                var comparison = new UserComparisonDTO
                 {
-                    FirstName = csvUser.FirstName,
-                    LastName = csvUser.LastName,
-                    Email = csvUser.Email,
-                    DepartmentName = csvUser.DepartmentName,
-                    AssignedToName = csvUser.AssignedToEmail != null
-                        ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.FirstName + " " +
-                          dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.LastName
-                        : null
+                    Id = Guid.NewGuid().ToString(), // For new users, generate new ID
+                    Status = "new",
+                    CsvUser = new CsvUserDataDTO
+                    {
+                        FirstName = csvUser.FirstName,
+                        LastName = csvUser.LastName,
+                        Email = csvUser.Email,
+                        DepartmentName = csvUser.DepartmentName,
+                        AssignedToName = csvUser.AssignedToEmail != null
+                            ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.FirstName + " " +
+                              dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.LastName
+                            : null
+                    },
+                    Selected = true // Auto-select new records
                 };
-                comparison.Selected = true; // Auto-select new records
-            }
 
-            comparisons.Add(comparison);
+                comparisons.Add(comparison);
+            }
         }
 
         // Find deleted users (in DB but not in CSV)
@@ -143,7 +148,7 @@ public class CsvSyncService : ICsvSyncService
             {
                 comparisons.Add(new UserComparisonDTO
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = dbUser.Id.ToString(), // Use actual database user ID for deleted users
                     Status = "deleted",
                     DbUser = MapToUserGETResponseDTO(dbUser, dbUsers),
                     Selected = false // Don't auto-select deletions
@@ -178,6 +183,7 @@ public class CsvSyncService : ICsvSyncService
                             CreatedAt = DateTime.UtcNow
                         };
                         await _departmentRepository.AddDepartmentAsync(department);
+                        departments.Add(department); // Add to cache
                     }
 
                     var assignedToId = item.CsvData.AssignedToEmail != null
@@ -196,59 +202,136 @@ public class CsvSyncService : ICsvSyncService
                     };
 
                     await _userRepository.AddUserAsync(newUser);
+                    dbUsers.Add(newUser); // Add to cache for subsequent operations
                     result.RecordsProcessed++;
                 }
                 else if (item.Status == "modified" && item.CsvData != null)
                 {
-                    // Update existing user
-                    var existingUser = dbUsers.FirstOrDefault(u => u.Email.Equals(item.CsvData.Email, StringComparison.OrdinalIgnoreCase));
+                    // Update existing user - reload from database to ensure fresh instance
+                    var existingUser = await _userRepository.GetUserByIdAsync(Guid.Parse(item.Id));
+                    
                     if (existingUser != null)
                     {
-                        // Apply selected conflict resolutions
-                        foreach (var conflict in item.Conflicts.Where(c => c.Selected))
+                        bool hasChanges = false;
+        
+                        // If there are selected conflicts, apply only those resolutions
+                        if (item.Conflicts.Any(c => c.Selected))
                         {
-                            if (conflict.SelectedValue == "csv")
+                            // Apply only selected conflict resolutions
+                            foreach (var conflict in item.Conflicts.Where(c => c.Selected))
                             {
-                                switch (conflict.Field.ToLower())
+                                // If no SelectedValue is specified, default to "csv"
+                                var selectedValue = conflict.SelectedValue ?? "csv";
+                
+                                if (selectedValue == "csv")
                                 {
-                                    case "firstname":
-                                        existingUser.FirstName = item.CsvData.FirstName;
-                                        break;
-                                    case "lastname":
-                                        existingUser.LastName = item.CsvData.LastName;
-                                        break;
-                                    case "departmentname":
-                                        var department = departments.FirstOrDefault(d => d.Name.Equals(item.CsvData.DepartmentName, StringComparison.OrdinalIgnoreCase));
-                                        if (department == null)
-                                        {
-                                            department = new Department
+                                    switch (conflict.Field.ToLower())
+                                    {
+                                        case "firstname":
+                                            if (existingUser.FirstName != item.CsvData.FirstName)
                                             {
-                                                Id = Guid.NewGuid(),
-                                                Name = item.CsvData.DepartmentName,
-                                                CreatedAt = DateTime.UtcNow
-                                            };
-                                            await _departmentRepository.AddDepartmentAsync(department);
-                                        }
-                                        existingUser.DepartmentId = department.Id;
-                                        break;
-                                    case "assignedtoname":
-                                        existingUser.AssignedToId = item.CsvData.AssignedToEmail != null
-                                            ? dbUsers.FirstOrDefault(u => u.Email.Equals(item.CsvData.AssignedToEmail, StringComparison.OrdinalIgnoreCase))?.Id
-                                            : null;
-                                        break;
+                                                existingUser.FirstName = item.CsvData.FirstName;
+                                                hasChanges = true;
+                                            }
+                                            break;
+                                        case "lastname":
+                                            if (existingUser.LastName != item.CsvData.LastName)
+                                            {
+                                                existingUser.LastName = item.CsvData.LastName;
+                                                hasChanges = true;
+                                            }
+                                            break;
+                                        case "departmentname":
+                                            var department = departments.FirstOrDefault(d => d.Name.Equals(item.CsvData.DepartmentName, StringComparison.OrdinalIgnoreCase));
+                                            if (department == null)
+                                            {
+                                                department = new Department
+                                                {
+                                                    Id = Guid.NewGuid(),
+                                                    Name = item.CsvData.DepartmentName,
+                                                    CreatedAt = DateTime.UtcNow
+                                                };
+                                                await _departmentRepository.AddDepartmentAsync(department);
+                                                departments.Add(department);
+                                            }
+                                            if (existingUser.DepartmentId != department.Id)
+                                            {
+                                                existingUser.DepartmentId = department.Id;
+                                                hasChanges = true;
+                                            }
+                                            break;
+                                        case "assignedtoname":
+                                            var newAssignedToId = item.CsvData.AssignedToEmail != null
+                                                ? dbUsers.FirstOrDefault(u => u.Email.Equals(item.CsvData.AssignedToEmail, StringComparison.OrdinalIgnoreCase))?.Id
+                                                : null;
+                                            if (existingUser.AssignedToId != newAssignedToId)
+                                            {
+                                                existingUser.AssignedToId = newAssignedToId;
+                                                hasChanges = true;
+                                            }
+                                            break;
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                            // If no conflicts are selected, update all fields that differ from database
+                            if (existingUser.FirstName != item.CsvData.FirstName)
+                            {
+                                existingUser.FirstName = item.CsvData.FirstName;
+                                hasChanges = true;
+                            }
+                            if (existingUser.LastName != item.CsvData.LastName)
+                            {
+                                existingUser.LastName = item.CsvData.LastName;
+                                hasChanges = true;
+                            }
+            
+                            var dept = departments.FirstOrDefault(d => d.Name.Equals(item.CsvData.DepartmentName, StringComparison.OrdinalIgnoreCase));
+                            if (dept == null)
+                            {
+                                dept = new Department
+                                {
+                                    Id = Guid.NewGuid(),
+                                    Name = item.CsvData.DepartmentName,
+                                    CreatedAt = DateTime.UtcNow
+                                };
+                                await _departmentRepository.AddDepartmentAsync(dept);
+                                departments.Add(dept);
+                            }
+                            if (existingUser.DepartmentId != dept.Id)
+                            {
+                                existingUser.DepartmentId = dept.Id;
+                                hasChanges = true;
+                            }
+            
+                            var assignedToId = item.CsvData.AssignedToEmail != null
+                                ? dbUsers.FirstOrDefault(u => u.Email.Equals(item.CsvData.AssignedToEmail, StringComparison.OrdinalIgnoreCase))?.Id
+                                : null;
+                            if (existingUser.AssignedToId != assignedToId)
+                            {
+                                existingUser.AssignedToId = assignedToId;
+                                hasChanges = true;
+                            }
+                        }
 
-                        existingUser.UpdatedAt = DateTime.UtcNow;
-                        await _userRepository.UpdateUserAsync(existingUser);
-                        result.RecordsProcessed++;
+                        if (hasChanges)
+                        {
+                            existingUser.UpdatedAt = DateTime.UtcNow;
+                            await _userRepository.UpdateUserAsync(existingUser);
+                            result.RecordsProcessed++;
+                        }
+                        else
+                        {
+                            result.RecordsSkipped++;
+                        }
                     }
                 }
                 else if (item.Status == "deleted")
                 {
                     // Soft delete user (you could also use hard delete)
-                    var userToDelete = dbUsers.FirstOrDefault(u => u.Id.ToString() == item.Id);
+                    var userToDelete = await _userRepository.GetUserByIdAsync(Guid.Parse(item.Id));
                     if (userToDelete != null)
                     {
                         userToDelete.DeletedAt = DateTime.UtcNow;

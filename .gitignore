@@ -35,6 +35,16 @@ yarn-error.log*
 [Ll]og/
 [Ll]ogs/
 
+# Explicit ignore for nested build outputs and NuGet generated props
+**/[Bb]in/
+**/[Oo]bj/
+**/*.csproj.nuget.g.props
+**/*.csproj.nuget.g.targets
+**/project.assets.json
+**/*.nuget.dgspec.json
+**/*.nuget.g.props
+**/*.nuget.g.targets
+
 # Visual Studio cache/options
 .vs/
 *.suo

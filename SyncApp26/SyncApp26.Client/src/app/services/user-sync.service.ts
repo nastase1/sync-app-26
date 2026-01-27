@@ -191,14 +191,15 @@ export class UserSyncService {
     const selectedItems = comparisons
       .filter(c => c.selected)
       .map(c => ({
-        id: c.id,
+        // For modified/deleted users, use dbUser.id; for new users, use comparison id
+        id: c.status === 'new' ? c.id : (c.dbUser?.id || c.id),
         status: c.status,
         csvData: c.csvUser ? {
           firstName: c.csvUser.firstName,
           lastName: c.csvUser.lastName,
           email: c.csvUser.email,
           departmentName: c.csvUser.departmentName,
-          assignedToEmail: null // You may need to map this if you store it
+          assignedToEmail: c.csvUser.assignedToName ? null : null // Map assignedToEmail if available
         } : null,
         conflicts: c.conflicts.map(conflict => ({
           field: conflict.field,
