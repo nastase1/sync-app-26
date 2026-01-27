@@ -2,14 +2,9 @@ using SyncApp26.Domain.Entities;
 using SyncApp26.Domain.IRepositories;
 using SyncApp26.Shared.DTOs;
 using SyncApp26.Shared.DTOs.Response.User;
+using SyncApp26.Application.IServices;
 
 namespace SyncApp26.Application.Services;
-
-public interface ICsvSyncService
-{
-    Task<List<UserComparisonDTO>> CompareWithDatabase(List<CsvUserDTO> csvUsers);
-    Task<SyncResultDTO> SyncUsers(SyncRequestDTO syncRequest);
-}
 
 public class CsvSyncService : ICsvSyncService
 {
@@ -333,10 +328,16 @@ public class CsvSyncService : ICsvSyncService
                 }
                 else if (item.Status == "deleted")
                 {
-                    // Soft delete user (you could also use hard delete)
+                    // Soft delete user if he hasn't been updated in 90 days
                     var userToDelete = await _userRepository.GetUserByIdAsync(Guid.Parse(item.Id));
                     if (userToDelete != null)
                     {
+                        if(userToDelete.UpdatedAt != null && userToDelete.UpdatedAt > DateTime.UtcNow.AddDays(-90))
+                        {
+                            result.RecordsSkipped++;
+                            continue; // Skip deletion
+                        }
+
                         userToDelete.DeletedAt = DateTime.UtcNow;
                         await _userRepository.UpdateUserAsync(userToDelete);
                         result.RecordsProcessed++;
