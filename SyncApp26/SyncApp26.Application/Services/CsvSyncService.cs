@@ -39,16 +39,18 @@ public class CsvSyncService : ICsvSyncService
             if (dbUserMap.TryGetValue(email, out var dbUser))
             {
                 // User exists - compare fields
+                var csvManager = csvUser.AssignedToEmail != null
+                    ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())
+                    : null;
+
                 var csvUserData = new CsvUserDataDTO
                 {
                     FirstName = csvUser.FirstName,
                     LastName = csvUser.LastName,
                     Email = csvUser.Email,
                     DepartmentName = csvUser.DepartmentName,
-                    AssignedToName = csvUser.AssignedToEmail != null
-                        ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.FirstName + " " +
-                          dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.LastName
-                        : null
+                    AssignedToEmail = csvUser.AssignedToEmail,
+                    AssignedToName = csvManager != null ? $"{csvManager.FirstName} {csvManager.LastName}" : null
                 };
 
                 // Detect conflicts
@@ -90,7 +92,6 @@ public class CsvSyncService : ICsvSyncService
                 // Check line manager
                 var csvManagerEmail = csvUser.AssignedToEmail?.ToLower();
                 var dbManagerId = dbUser.AssignedToId;
-                var csvManager = csvManagerEmail != null ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvManagerEmail) : null;
 
                 if ((csvManager?.Id ?? null) != dbManagerId)
                 {
@@ -118,6 +119,10 @@ public class CsvSyncService : ICsvSyncService
             else
             {
                 // New user from CSV
+                var newCsvManager = csvUser.AssignedToEmail != null
+                    ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())
+                    : null;
+
                 var comparison = new UserComparisonDTO
                 {
                     Id = Guid.NewGuid().ToString(), // For new users, generate new ID
@@ -128,10 +133,8 @@ public class CsvSyncService : ICsvSyncService
                         LastName = csvUser.LastName,
                         Email = csvUser.Email,
                         DepartmentName = csvUser.DepartmentName,
-                        AssignedToName = csvUser.AssignedToEmail != null
-                            ? dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.FirstName + " " +
-                              dbUsers.FirstOrDefault(u => u.Email.ToLower() == csvUser.AssignedToEmail.ToLower())?.LastName
-                            : null
+                        AssignedToEmail = csvUser.AssignedToEmail,
+                        AssignedToName = newCsvManager != null ? $"{newCsvManager.FirstName} {newCsvManager.LastName}" : null
                     },
                     Selected = true // Auto-select new records
                 };

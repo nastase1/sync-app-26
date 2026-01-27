@@ -199,7 +199,7 @@ export class UserSyncService {
           lastName: c.csvUser.lastName,
           email: c.csvUser.email,
           departmentName: c.csvUser.departmentName,
-          assignedToEmail: c.csvUser.assignedToName ? null : null // Map assignedToEmail if available
+          assignedToEmail: (c.csvUser as any).assignedToEmail || null
         } : null,
         conflicts: c.conflicts.map(conflict => ({
           field: conflict.field,

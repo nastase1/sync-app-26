@@ -27,7 +27,8 @@ public class CsvUserDataDTO
     public required string LastName { get; set; }
     public required string Email { get; set; }
     public required string DepartmentName { get; set; }
-    public string? AssignedToName { get; set; }
+    public string? AssignedToEmail { get; set; } // Line manager email
+    public string? AssignedToName { get; set; } // Line manager display name
 }
 
 public class FieldConflictDTO
