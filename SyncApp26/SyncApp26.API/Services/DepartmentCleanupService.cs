@@ -23,14 +23,19 @@ namespace SyncApp26.API.Services
                 try
                 {
                     await CleanupOldDepartmentsAsync(stoppingToken);
+
+                    // Run once a day; delay is inside the try so cancellation exits cleanly
+                    await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    // Expected when the host signals shutdown – exit the loop gracefully
+                    break;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error occurred executing Department Cleanup.");
                 }
-
-                // Run once a day
-                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
             }
         }
 
